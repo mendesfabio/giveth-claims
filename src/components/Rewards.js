@@ -28,12 +28,6 @@ function Rewards({ address, wallet, network, onboard}) {
       console.log('total', amountBN)
       setUnclaimedAmount(amountBN)
     }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(provider)
-    const contract = new Contract(MERKLE_DISTRIBUTOR_ADDRESS, MERKLE_DISTRIBUTOR_ABI, provider)
-    setDistributorContract(contract)
-    const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
-    setTokenContract(tokenContract)
     updateUserStates()
   }, [address])
 
@@ -46,6 +40,12 @@ function Rewards({ address, wallet, network, onboard}) {
   }
 
   useEffect(()=>{
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    setProvider(provider)
+    const contract = new Contract(MERKLE_DISTRIBUTOR_ADDRESS, MERKLE_DISTRIBUTOR_ABI, provider)
+    setDistributorContract(contract)
+    const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
+    setTokenContract(tokenContract)
     getClaimable()
 
     const interval = setInterval(()=>{
