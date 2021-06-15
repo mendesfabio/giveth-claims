@@ -18,6 +18,7 @@ function Rewards({ address, wallet, network, onboard, provider}) {
   const [claimableAmount, setClaimableAmount] = useState(ethers.BigNumber.from(0))
 
   async function updateUnclaimedAmount() {
+    if (!address) return
     const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
     const amountBN = ethers.BigNumber.from(amount)
     setUnclaimedAmount(amountBN)
@@ -35,7 +36,7 @@ function Rewards({ address, wallet, network, onboard, provider}) {
 
   useEffect(() => {
     updateUnclaimedAmount()
-  }, [])
+  }, [address])
 
   useEffect(()=>{
 
@@ -46,9 +47,10 @@ function Rewards({ address, wallet, network, onboard, provider}) {
      }, 10000)
 
      return () => clearInterval(interval)
-  }, [])
+  }, [address])
 
   async function handleAssign() {
+      if (!provider) return
 
       const signer = await provider.getSigner()
       const claimData = await fetchClaimData(ethers.utils.getAddress(address))
@@ -67,6 +69,7 @@ function Rewards({ address, wallet, network, onboard, provider}) {
   }
 
   async function handleClaim() {
+      if (!provider) return
       const signer = await provider.getSigner()
       const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
       const result = await tokenContract.connect(signer).claim()
