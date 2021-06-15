@@ -24,6 +24,7 @@ function Rewards({ address, wallet, network, onboard}) {
     async function updateUserStates() {
       const amount = await userUnclaimedAmount(address)
       const amountBN = ethers.BigNumber.from(amount)
+      console.log(amountBN)
       setUnclaimedAmount(amountBN)
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -218,7 +219,7 @@ function Rewards({ address, wallet, network, onboard}) {
                   <h2>GIV</h2>
                 </BigCurrency>
                 <div>
-                  <h3>Vested</h3>
+                  <h3>Claimable</h3>
                 </div>
               </div>
             </Inline>
