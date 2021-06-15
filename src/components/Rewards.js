@@ -139,8 +139,8 @@ function Rewards({ address, wallet, network, onboard}) {
               />
               <div>
                 <BigCurrency>
-                  <h1>900</h1>
-                  <h2>DN</h2>
+                  <h1>0</h1>
+                  <h2>GIV</h2>
                 </BigCurrency>
                 <div>
                   <h3>Claimable</h3>
@@ -159,8 +159,8 @@ function Rewards({ address, wallet, network, onboard}) {
               />
               <div>
                 <BigCurrency>
-                  <h1>10</h1>
-                  <h2>DN</h2>
+                  <h1>0</h1>
+                  <h2>GIV</h2>
                 </BigCurrency>
                 <div>
                   <h3>Locked</h3>
