@@ -22,9 +22,9 @@ function Rewards({ address, wallet, network, onboard}) {
 
   useEffect(() => {
     async function updateUserStates() {
-      const amount = await userUnclaimedAmount(address)
+      const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
       const amountBN = ethers.BigNumber.from(amount)
-      console.log(amountBN)
+      console.log(amountBN.toString())
       setUnclaimedAmount(amountBN)
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -39,7 +39,7 @@ function Rewards({ address, wallet, network, onboard}) {
   const getClaimable = async () => {
     if (provider) {
       const signer = await provider.getSigner()
-      const result = await tokenContract.connect(signer).claimableNow(address)
+      const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
       setClaimableAmount(result)
     }
   }
