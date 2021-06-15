@@ -17,7 +17,7 @@ function Dashboard({ provider, address, network, wallet, onboard }) {
         My tokens
       </Inter700>
       <PoolsContainer>
-        <Rewards address={address} wallet={wallet} network={network} onboard={onboard} />
+        <Rewards address={address} wallet={wallet} network={network} onboard={onboard} provider={provider}/>
       </PoolsContainer>
       <br />
       <Inter700>

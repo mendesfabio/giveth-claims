@@ -13,78 +13,64 @@ import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json'
 const MERKLE_DISTRIBUTOR_ADDRESS = '0x740ad4827BA4b2b9E5a91c64E6e492763b0641c9'
 const TOKEN_DISTRO_ADDRESS = '0xdDc436916c45dfA5E65C598bC4c5F27739F7638b'
 
-function Rewards({ address, wallet, network, onboard}) {
-  const [provider, setProvider] = useState();
+function Rewards({ address, wallet, network, onboard, provider}) {
   const [unclaimedAmount, setUnclaimedAmount] = useState(ethers.BigNumber.from(0))
   const [claimableAmount, setClaimableAmount] = useState(ethers.BigNumber.from(0))
-  const [distributorContract, setDistributorContract] = useState()
-  const [tokenContract, setTokenContract] = useState()
+
+  async function updateUnclaimedAmount() {
+    const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
+    const amountBN = ethers.BigNumber.from(amount)
+    setUnclaimedAmount(amountBN)
+  }
+
+  async function getClaimableAmount() {
+    console.log(provider)
+    if (!provider) return
+    const signer = await provider.getSigner()
+    const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
+    const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
+    setClaimableAmount(result)
+    console.log(result.toString())
+}
 
   useEffect(() => {
-    if (!address) return
-    async function updateUserStates() {
-      const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
-      const amountBN = ethers.BigNumber.from(amount)
-      console.log('total', amountBN)
-      setUnclaimedAmount(amountBN)
-    }
-    updateUserStates()
-  }, [address])
-
-  const getClaimable = async () => {
-      const signer = await provider.getSigner()
-      const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
-      console.log('claimable', result)
-      setClaimableAmount(result)
-  }
-
-  useEffect(()=>{
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(provider)
-    const contract = new Contract(MERKLE_DISTRIBUTOR_ADDRESS, MERKLE_DISTRIBUTOR_ABI, provider)
-    setDistributorContract(contract)
-    const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
-    setTokenContract(tokenContract)
-    getClaimable()
-
-    const interval = setInterval(()=>{
-      getClaimable()
-     }, 10000)
-
-     return() => clearInterval(interval)
+    updateUnclaimedAmount()
   }, [])
 
-  const handleClaimAmount = async () => {
+  useEffect(()=>{
 
-    if(provider && distributorContract) {
-      console.log('workin')
-    const signer = await provider.getSigner()
-    const claimData = await fetchClaimData(ethers.utils.getAddress(address))
+    getClaimableAmount()
 
-    const isClaimedResult = await distributorContract.isClaimed(claimData.index)
-    const canClaim = Boolean(claimData && isClaimedResult === false)
-    console.log('can', canClaim)
-    if (!unclaimedAmount || !canClaim || !address || !distributorContract) return
+    const interval = setInterval(() => {
+      getClaimableAmount()
+     }, 10000)
 
-    const args = [claimData.index, address, claimData.amount, claimData.proof]
+     return () => clearInterval(interval)
+  }, [])
 
-    const result = await distributorContract.connect(signer).claim(...args)
+  async function handleAssign() {
 
-    console.log(result)
+      const signer = await provider.getSigner()
+      const claimData = await fetchClaimData(ethers.utils.getAddress(address))
+      const merkleContract = new Contract(MERKLE_DISTRIBUTOR_ADDRESS, MERKLE_DISTRIBUTOR_ABI, provider)
+      const isClaimedResult = await merkleContract.isClaimed(claimData.index)
+      const canClaim = Boolean(claimData && isClaimedResult === false)
 
-    }
+      if (!unclaimedAmount || !canClaim || !address || !merkleContract) return
+
+      const args = [claimData.index, address, claimData.amount, claimData.proof]
+
+      const result = await merkleContract.connect(signer).claim(...args)
+
+      console.log(result)
 
   }
 
-  const handleClaim = async () => {
-
-    if(provider && tokenContract) {
-      console.log('workin')
+  async function handleClaim() {
       const signer = await provider.getSigner()
+      const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
       const result = await tokenContract.connect(signer).claim()
       console.log(result)
-    }
-
   }
 
   console.log('asset', wallet)
@@ -223,7 +209,7 @@ function Rewards({ address, wallet, network, onboard}) {
                 </div>
               </div>
             </Inline>
-            <GreenButton disabled={!isDN(network)} onClick={handleClaimAmount}>
+            <GreenButton disabled={!isDN(network)} onClick={handleAssign}>
               Assign
             </GreenButton>
           </SpaceBetween>
