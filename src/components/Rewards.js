@@ -32,10 +32,10 @@ function Rewards({ address, wallet, network, onboard}) {
   }, [address])
 
   const getClaimable = async () => {
-    if (!tokenContract) return
-    const result = await tokenContract.claimableNow(ethers.utils.getAddress(address))
-    console.log('claimable', result)
-    setClaimableAmount(result)
+      const signer = await provider.getSigner()
+      const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
+      console.log('claimable', result)
+      setClaimableAmount(result)
   }
 
   useEffect(()=>{
@@ -78,7 +78,7 @@ function Rewards({ address, wallet, network, onboard}) {
 
   const handleClaim = async () => {
 
-    if(provider && distributorContract) {
+    if(provider && tokenContract) {
       console.log('workin')
       const signer = await provider.getSigner()
       const result = await tokenContract.connect(signer).claim()
