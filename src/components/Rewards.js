@@ -38,12 +38,11 @@ function Rewards({ address, wallet, network, onboard}) {
   }, [address])
 
   const getClaimable = async () => {
-    if (provider) {
-      const signer = await provider.getSigner()
-      const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
-      console.log('claimable', result)
-      setClaimableAmount(result)
-    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = await provider.getSigner()
+    const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
+    console.log('claimable', result)
+    setClaimableAmount(result)
   }
 
   useEffect(()=>{
