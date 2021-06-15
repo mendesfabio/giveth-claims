@@ -21,6 +21,7 @@ function Rewards({ address, wallet, network, onboard}) {
   const [tokenContract, setTokenContract] = useState()
 
   useEffect(() => {
+    if (!address) return
     async function updateUserStates() {
       const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
       const amountBN = ethers.BigNumber.from(amount)
