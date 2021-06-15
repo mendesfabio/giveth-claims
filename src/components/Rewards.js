@@ -21,21 +21,21 @@ function Rewards({ address, wallet, network, onboard}) {
   const [tokenContract, setTokenContract] = useState()
 
   useEffect(() => {
-    if (!address) return
-    async function updateUserStates() {
-      const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
-      const amountBN = ethers.BigNumber.from(amount)
-      console.log(amountBN.toString())
-      setUnclaimedAmount(amountBN)
-    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider)
     const contract = new Contract(MERKLE_DISTRIBUTOR_ADDRESS, MERKLE_DISTRIBUTOR_ABI, provider)
     setDistributorContract(contract)
     const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
     setTokenContract(tokenContract)
-    updateUserStates()
   }, [address])
+
+  async function updateUserStates() {
+    if (!address) return
+    const amount = await userUnclaimedAmount(ethers.utils.getAddress(address))
+    const amountBN = ethers.BigNumber.from(amount)
+    console.log(amountBN.toString())
+    setUnclaimedAmount(amountBN)
+  }
 
   const getClaimable = async () => {
     if (provider) {
@@ -47,10 +47,12 @@ function Rewards({ address, wallet, network, onboard}) {
 
   useEffect(()=>{
     getClaimable()
+    updateUserStates()
 
     const interval = setInterval(()=>{
       getClaimable()
-     }, 30000)
+      updateUserStates()
+     }, 10000)
 
      return() => clearInterval(interval)
   }, [])
