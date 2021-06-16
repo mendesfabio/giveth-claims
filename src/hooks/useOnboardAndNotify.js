@@ -12,35 +12,33 @@ export function useOnboardAndNotify() {
   const [onboard, setOnboard] = useState(null)
   const [notify, setNotify] = useState(null)
 
-  useEffect(
-    () => {
-      if (!onboard) {
-        const onboard = initOnboard({
-          address: setAddress,
-          network: setNetwork,
-          balance: setBalance,
-          wallet: wallet => {
-            if (wallet.provider) {
-              setWallet(wallet)
-              const ethersProvider = new ethers.providers.Web3Provider(
-                wallet.provider
-              )
-              setProvider(ethersProvider)
-              window.localStorage.setItem('selectedWallet', wallet.name)
-            } else {
-              setWallet({})
-            }
-          },
-        })
-        setOnboard(onboard)
-      }
+  useEffect(() => {
+    const onboard = initOnboard({
+      address: setAddress,
+      network: setNetwork,
+      balance: setBalance,
+      wallet: wallet => {
+        if (wallet.provider) {
+          setWallet(wallet)
 
-      if (!notify) {
-        setNotify(initNotify())
+          const ethersProvider = new ethers.providers.Web3Provider(
+            wallet.provider
+          )
+
+          setProvider(ethersProvider)
+
+          window.localStorage.setItem('selectedWallet', wallet.name)
+        } else {
+          setProvider(null)
+          setWallet({})
+        }
       }
-    },
-    [address, network, balance]
-  )
+    })
+
+    setOnboard(onboard)
+
+    setNotify(initNotify())
+  }, [])
 
   useEffect(
     () => {

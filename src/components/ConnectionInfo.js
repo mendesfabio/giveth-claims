@@ -5,10 +5,23 @@ import { LightGreenButton, NavbarButton } from './Styles.js'
 
 const Connection = ({ address, ethBalance, network, wallet, onboard }) => (
   <>
+    {wallet.provider && (
+      <ConnectWallet
+        onClick={ () => {
+          console.log(onboard.walletReset())
+          onboard.walletReset()
+        }}
+      >
+        Disconnect Wallet
+      </ConnectWallet>
+    )}
     {!wallet.provider && (
       <ConnectWallet
-        onClick={() => {
-          onboard.walletSelect()
+        onClick={async () => {
+          const select = await onboard.walletSelect()
+          if (!select) return false
+          const ready = await onboard.walletCheck()
+          return ready
         }}
       >
         Connect Wallet
@@ -45,6 +58,7 @@ const ConnectWallet = styled.button`
   box-shadow: 0px 1px 1px rgba(8, 43, 41, 0.08),
     0px 0px 8px rgba(8, 43, 41, 0.06);
   &:hover {
+    cursor: pointer;
     background: #c4f3ef;
     color: #144b52;
     transition: all 0.25s ease-in-out;

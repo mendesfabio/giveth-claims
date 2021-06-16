@@ -25,8 +25,8 @@ function Rewards({ address, wallet, network, onboard, provider}) {
   }
 
   async function getClaimableAmount() {
-    console.log(provider)
-    if (!provider) return
+    console.log(address, wallet, network, provider)
+    if (!wallet.provider) return
     const signer = await provider.getSigner()
     const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
     const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
@@ -85,8 +85,11 @@ function Rewards({ address, wallet, network, onboard, provider}) {
             Please connect to a wallet
           </WarnMessage>
           <GreenButton
-            onClick={() => {
-              onboard.walletSelect()
+            onClick={async () => {
+              const select = await onboard.walletSelect()
+              if (!select) return false
+              const ready = await onboard.walletCheck()
+              return ready
             }}
             css={`
               margin-top: 25px;

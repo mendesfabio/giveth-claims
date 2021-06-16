@@ -10,7 +10,7 @@
     "@testing-library/user-event": "^12.1.10",
     "bnc-notify": "^1.5.1",
     "bnc-notify-staging": "https://github.com/blocknative/notify#develop",
-    "bnc-onboard": "^1.19.0",
+    "bnc-onboard": "^1.27.0",
     "bnc-onboard-staging": "https://github.com/blocknative/onboard#develop",
     "eth-rpc-errors": "^4.0.3",
     "ethers": "^5.3.1",
