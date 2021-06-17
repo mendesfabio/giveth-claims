@@ -84,19 +84,7 @@ function Rewards({ address, wallet, network, onboard, provider}) {
           <WarnMessage className="margin-bottom">
             Please connect to a wallet
           </WarnMessage>
-          <GreenButton
-            onClick={async () => {
-              const select = await onboard.walletSelect()
-              if (!select) return false
-              const ready = await onboard.walletCheck()
-              return ready
-            }}
-            css={`
-              margin-top: 25px;
-            `}
-          >
-            Connect Wallet
-          </GreenButton>
+
         </div>
       </WarnSection>
     )
