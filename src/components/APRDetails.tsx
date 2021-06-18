@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import Popup from 'reactjs-popup'
 import styled from 'styled-components'
 import 'reactjs-popup/dist/index.css'
@@ -19,7 +20,7 @@ function APRDetails() {
         <div className="modal">
           <Spaced>
             <h2>APR Details</h2>
-            <img alt="close" src={closeModal} onClick={close} />
+            <Image alt="close" src={closeModal} onClick={close} />
           </Spaced>
           <div className="apr-table">
             <div>
@@ -46,7 +47,7 @@ function APRDetails() {
           </div>
           <div className="actions">
             <WhiteGreenButtonLink>
-              Get more DN <img alt="link" src={external} />
+              Get more DN <Image alt="link" src={external} />
             </WhiteGreenButtonLink>
           </div>
         </div>

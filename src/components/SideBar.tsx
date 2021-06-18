@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Image from 'next/image'
 import styled from 'styled-components'
 import BurgerMenu from 'react-burger-menu'
 import ConnectionInfo from './ConnectionInfo'
@@ -120,7 +121,7 @@ function Sidebar({
                 <Inter400>103.20</Inter400>
               </BalanceBox>
               <br/>
-              <WhiteGreenButtonLink>Get more DN <img alt="link" src={external}/></WhiteGreenButtonLink>
+              <WhiteGreenButtonLink>Get more DN <Image alt="link" src={external}/></WhiteGreenButtonLink>
             </div>
           </SidebarCard>
           <br />
@@ -150,7 +151,8 @@ const Top = styled.div`
   top: 0;
   left: 0;
   display: flex !important;
-  align-items: center;
+  align-items: ceimport { Image } from 'next/image';
+nter;
   justify-content: flex-start;
   position: relative;
   height: 64px;
