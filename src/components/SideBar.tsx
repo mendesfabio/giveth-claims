@@ -12,7 +12,7 @@ import {
   BigCurrency,
   GreenButton,
   WhiteGreenButtonLink
-} from './Styles.js'
+} from './Styles'
 
 class MenuWrap extends Component {
   constructor(props) {

@@ -37,7 +37,6 @@ export function useOnboardAndNotify() {
 
     setOnboard(onboard)
 
-    setNotify(initNotify())
   }, [])
 
   useEffect(

@@ -1,32 +1,18 @@
 import React from 'react'
+import Image from 'next/image'
 import styled from 'styled-components'
 import logo from '../assets/mini-logo.svg'
-import { networkAllowed } from '../lib/web3-utils'
 import ConnectionInfo from './ConnectionInfo'
 
-const Navbar = ({
-  address,
-  ethBalance,
-  network,
-  wallet,
-  onboard,
-  openSidebar,
-}) => (
+const Navbar = () => (
+
   <NavbarSection>
-    {networkAllowed(network) && <ConnectedLine />}
     <Container>
-      <h1 onClick={openSidebar}>
-        <img src={logo} alt="logo" />
-        DAppNode Dashboard
+      <h1>
+        <Image src={logo} alt="logo" width={36} height={36} />
       </h1>
       <div>
-        <ConnectionInfo
-          address={address}
-          ethBalance={ethBalance}
-          network={network}
-          wallet={wallet}
-          onboard={onboard}
-        />
+        <ConnectionInfo />
       </div>
     </Container>
   </NavbarSection>

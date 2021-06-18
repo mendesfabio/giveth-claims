@@ -1,5 +1,3 @@
-import stagingOnboard from 'bnc-onboard-staging'
-import stagingNotify from 'bnc-notify-staging'
 import Notify from 'bnc-notify'
 import Onboard from 'bnc-onboard'
 
@@ -16,7 +14,6 @@ export function initOnboard(subscriptions) {
     hideBranding: false,
     networkId,
     apiUrl,
-    // darkMode: true,
     subscriptions,
     walletSelect: {
       wallets: [

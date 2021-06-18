@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { networkAllowed, isMainnet, isDN } from '../lib/web3-utils'
 import Seed from '../assets/seed.js'
 import Time from '../assets/time.js'
-import { BigCurrency, GreenButton } from './Styles.js'
+import { BigCurrency, GreenButton } from './Styles'
 import { ethers, Contract } from "ethers";
 
 import { fetchClaimData, userUnclaimedAmount } from '../helpers'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '../artifacts/MerkleDistributorVested.json'
 import { abi as TOKEN_DISTRO_ABI } from '../artifacts/TokenDistro.json'
+import { OnboardContext } from '../contexts/OnboardContext'
 
 const MERKLE_DISTRIBUTOR_ADDRESS = '0x740ad4827BA4b2b9E5a91c64E6e492763b0641c9'
 const TOKEN_DISTRO_ADDRESS = '0xdDc436916c45dfA5E65C598bC4c5F27739F7638b'
 
-function Rewards({ address, wallet, network, onboard, provider}) {
+function Rewards() {
+  const { connect, address, network, isReady, provider } = useContext(OnboardContext)
+
   const [unclaimedAmount, setUnclaimedAmount] = useState(ethers.BigNumber.from(0))
   const [claimableAmount, setClaimableAmount] = useState(ethers.BigNumber.from(0))
 
@@ -25,8 +28,8 @@ function Rewards({ address, wallet, network, onboard, provider}) {
   }
 
   async function getClaimableAmount() {
-    console.log(address, wallet, network, provider)
-    if (!wallet.provider) return
+    console.log(address, network, provider)
+    if (!provider) return
     const signer = await provider.getSigner()
     const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
     const result = await tokenContract.connect(signer).claimableNow(ethers.utils.getAddress(address))
@@ -76,14 +79,19 @@ function Rewards({ address, wallet, network, onboard, provider}) {
       console.log(result)
   }
 
-  console.log('asset', wallet)
-  if (!wallet.provider) {
+  if (!isReady) {
     return (
       <WarnSection>
         <div>
           <WarnMessage className="margin-bottom">
             Please connect to a wallet
           </WarnMessage>
+          <GreenButton
+            onClick={connect}
+            css={`margin-top: 25px;`}
+          >
+            Connect Wallet
+          </GreenButton>
 
         </div>
       </WarnSection>
@@ -144,11 +152,11 @@ function Rewards({ address, wallet, network, onboard, provider}) {
                   <h2>GIV</h2>
                 </BigCurrency>
                 <div>
-                  <h3>Locked</h3>
+                  <h3>Assignable</h3>
                 </div>
               </div>
             </Inline>
-            <BlueButton disabled={!isMainnet(network)}>Claim</BlueButton>
+            <BlueButton disabled={!isMainnet(network)}>Assign</BlueButton>
           </SpaceBetween>
         </Row>
       </RewardsSection>
@@ -180,7 +188,9 @@ function Rewards({ address, wallet, network, onboard, provider}) {
               </div>
             </Inline>
 
-            <GreenButton disabled={!isDN(network)} onClick={handleClaim}>
+            <GreenButton
+              disabled={!isDN(network) && claimableAmount.gt(0)}
+            >
               Claim
             </GreenButton>
           </SpaceBetween>
@@ -199,7 +209,7 @@ function Rewards({ address, wallet, network, onboard, provider}) {
                   <h2>GIV</h2>
                 </BigCurrency>
                 <div>
-                  <h3>Claimable</h3>
+                  <h3>Assignable</h3>
                 </div>
               </div>
             </Inline>
@@ -218,7 +228,6 @@ const BlueButton = styled.button`
     props.disabled
       ? '#DDE3E3'
       : 'linear-gradient(99.61deg, #86BDE4 -0.13%, #0D91F0 99.3%);'};
-
   border: solid 0px transparent;
   border-radius: 27px;
   font-family: 'Inter-Bold';
@@ -235,7 +244,6 @@ const BlueButton = styled.button`
       props.disabled
         ? '#DDE3E3'
         : 'linear-gradient(99.61deg, #7cadd0 -0.13%, #075c98 99.3%);'};
-
     transition: all 0.25s ease-in-out;
   }
 `
@@ -297,7 +305,6 @@ const RewardsSection = styled.section`
   flex-grow: 1;
   margin: 0 10px;
   background: ${props => (props.disabled ? '#F4F6F6' : 'white')};
-
   label {
     background: #eefcfb;
     border-radius: 16px;
