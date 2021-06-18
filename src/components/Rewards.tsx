@@ -72,6 +72,7 @@ function Rewards() {
   }
 
   async function handleClaim() {
+      console.log(provider)
       if (!provider) return
       const signer = await provider.getSigner()
       const tokenContract = new Contract(TOKEN_DISTRO_ADDRESS, TOKEN_DISTRO_ABI, provider)
@@ -189,6 +190,7 @@ function Rewards() {
             </Inline>
 
             <GreenButton
+              onClick={handleClaim}
               disabled={!isDN(network) && claimableAmount.gt(0)}
             >
               Claim
