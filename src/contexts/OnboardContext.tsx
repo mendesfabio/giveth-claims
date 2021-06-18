@@ -28,37 +28,41 @@ export function OnboardProvider({ children }: OnboardProviderProps) {
   const [wallet, setWallet] = useState({})
 
   useEffect(() => {
-    const onboard = initOnboard({
-      address: setAddress,
-      network: setNetwork,
-      balance: setBalance,
-      wallet: wallet => {
-        if (wallet.provider) {
-          setWallet(wallet)
-
-          const ethersProvider = new ethers.providers.Web3Provider(
-            wallet.provider
-          )
-
-          setProvider(ethersProvider)
-
-          window.localStorage.setItem('selectedWallet', wallet.name)
-        } else {
-          setProvider(null)
-          setWallet({})
+    if (!onboard) {
+      const onboard = initOnboard({
+        address: setAddress,
+        network: setNetwork,
+        balance: setBalance,
+        wallet: wallet => {
+          if (wallet.provider) {
+            setWallet(wallet)
+            const ethersProvider = new ethers.providers.Web3Provider(wallet.provider)
+            setProvider(ethersProvider)
+          } else {
+            setProvider(null)
+            setWallet({})
+          }
         }
-      }
-    })
-
-    setOnboard(onboard)
-
+      })
+      setOnboard(onboard)
+    }
   }, [])
+
+  useEffect(() => {
+    const previouslySelectedWallet = window.localStorage.getItem('selectedWallet')
+
+    if (previouslySelectedWallet && onboard) {
+      onboard.walletSelect(previouslySelectedWallet)
+      setIsReady(true)
+    }
+  }, [onboard])
 
   async function connect() {
     const selected = await onboard.walletSelect()
     if (!selected) return
     const ready = await onboard.walletCheck()
     if (!ready) return
+    window.localStorage.setItem('selectedWallet', wallet.name)
     setIsReady(true)
   }
 
