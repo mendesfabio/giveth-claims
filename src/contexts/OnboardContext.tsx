@@ -25,7 +25,7 @@ export function OnboardProvider({ children }: OnboardProviderProps) {
   const [balance, setBalance] = useState(null)
   const [onboard, setOnboard] = useState(null)
   const [isReady, setIsReady] = useState(false)
-  const [wallet, setWallet] = useState({})
+  const [wallet, setWallet] = useState<any>({})
 
   useEffect(() => {
     if (!onboard) {
